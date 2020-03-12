@@ -1,6 +1,8 @@
 # Python Request Demo!
 
-This is a demonstration Python repository that shows how to interact with a Mongo database through a single, persistent connection!
+![Screenshot](https://i.imgur.com/7Dven1P.png)
+
+This is a demonstration Python repository I wrote that shows how to interact with a Mongo database through a single, persistent connection!
 
 The main things on display here are:
 - That we can perform Mongo DB queries and operations with a single connection, without having to create a new one each time we want to ask Mongo for information.
