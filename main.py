@@ -1,7 +1,8 @@
 import requests
 import json
-from db import Database
 import configparser
+
+from db import Mongo
 
 
 def print_reqres():
@@ -11,30 +12,43 @@ def print_reqres():
         print(json.dumps(data, indent=4))
 
 
-def get_word(english):
-    this_word = db.get_db().get_collection("test").find({})
+def get_content(connection):
+    """
+    This assumed "test" collection could promoted to a Config variable as well, but I had to draw a line _somewhere_ for demonstration purposes
+    """
+    content = connection.get_db().get_collection("test").find_one({})
+    print(content)
 
-    print(this_word)
+
+def get_collections(connection):
+    collections = connection.get_db().list_collection_names()
+    print(f"Collections in this database: {collections}")
 
 
 if __name__ == "__main__":
     config = configparser.RawConfigParser()
     config.read("config.cfg")
 
-    db = Database(config)
+    mongo = Mongo(config)
 
-    while True:
-        try:
+    try:
+        while True:
             cmd = input("blah: ").lower()
             if cmd == "exit":
                 break
+            elif cmd == "help":
+                print("Available commands: exit, help, close, collections, reqres, (any)")
             elif cmd == "close":
-                db.close_db()
+                mongo.close_db()
+            elif cmd == "collections":
+                get_collections(mongo)
+            elif cmd == "reqres":
+                print_reqres()
             else:
-                get_word("making it good")
-        except (KeyboardInterrupt, SystemExit):
-            db.close_db()
-            print("> program interrupted!")
-
-    db.close_db()
-    print("> program completed!")
+                get_content(mongo)
+    except (KeyboardInterrupt, SystemExit):
+        mongo.close_db()
+        print("> program interrupted!")
+    finally:
+        mongo.close_db()
+        print("> program completed!")
